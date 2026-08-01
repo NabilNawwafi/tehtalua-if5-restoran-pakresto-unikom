@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MejaController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PesananController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'));
@@ -20,6 +21,11 @@ Route::middleware(['auth', 'role:Pelayan'])->group(function () {
     // Modul Meja (Pro-1)
     Route::get('/pelayan/meja', [MejaController::class, 'index'])->name('pelayan.meja.index');
     Route::post('/pelayan/meja/{meja}/pilih', [MejaController::class, 'pilih'])->name('pelayan.meja.pilih');
+
+    // Modul Pemesanan (Pro-2)
+    Route::get('/pelayan/pesanan', [PesananController::class, 'index'])->name('pelayan.pesanan.index');
+    Route::get('/pelayan/pesanan/create/{meja}', [PesananController::class, 'create'])->name('pelayan.pesanan.create');
+    Route::post('/pelayan/pesanan/{meja}', [PesananController::class, 'store'])->name('pelayan.pesanan.store');
 });
 
 // ---- Koki ----

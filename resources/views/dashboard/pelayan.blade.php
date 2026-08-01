@@ -20,8 +20,8 @@
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Modul Pemesanan</h5>
-                <p class="card-text small text-muted">Pemesanan menu (Pro-2) — akan ditambahkan Hari 3.</p>
-                <button class="btn btn-secondary btn-sm" disabled>Segera Hadir</button>
+                <p class="card-text small text-muted">Pemesanan menu (Pro-2).</p>
+                <a href="{{ route('pelayan.pesanan.index') }}" class="btn btn-primary btn-sm">Buka Modul</a>
             </div>
         </div>
     </div>
