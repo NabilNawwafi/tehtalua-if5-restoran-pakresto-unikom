@@ -4,9 +4,35 @@
 
 @section('content')
 <h3>Selamat datang, {{ $user->nama_pegawai }}</h3>
-<p class="text-muted">Dashboard Pelayan — Modul Meja &amp; Pemesanan akan ditambahkan di sini (Hari 2-3).</p>
+<p class="text-muted">Dashboard Pelayan.</p>
 
-<div class="alert alert-info">
-    Modul yang akan dibangun di sini: Penempatan Meja (Pro-1), Pemesanan Menu (Pro-2), Penyajian (Pro-4).
+<div class="row g-3 mt-2">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Modul Meja</h5>
+                <p class="card-text small text-muted">Penempatan meja pelanggan (Pro-1).</p>
+                <a href="{{ route('pelayan.meja.index') }}" class="btn btn-primary btn-sm">Buka Modul</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Modul Pemesanan</h5>
+                <p class="card-text small text-muted">Pemesanan menu (Pro-2) — akan ditambahkan Hari 3.</p>
+                <button class="btn btn-secondary btn-sm" disabled>Segera Hadir</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Modul Penyajian</h5>
+                <p class="card-text small text-muted">Konfirmasi penyajian (Pro-4) — akan ditambahkan Hari 4.</p>
+                <button class="btn btn-secondary btn-sm" disabled>Segera Hadir</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
