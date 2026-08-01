@@ -29,8 +29,8 @@
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Modul Penyajian</h5>
-                <p class="card-text small text-muted">Konfirmasi penyajian (Pro-4) — akan ditambahkan Hari 4.</p>
-                <button class="btn btn-secondary btn-sm" disabled>Segera Hadir</button>
+                <p class="card-text small text-muted">Konfirmasi penyajian (Pro-4).</p>
+                <a href="{{ route('pelayan.penyajian.index') }}" class="btn btn-primary btn-sm">Buka Modul</a>
             </div>
         </div>
     </div>
