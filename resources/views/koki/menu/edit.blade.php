@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Edit Menu</h3>
+    <h3><i class="bi bi-journal-text me-2"></i>Edit Menu</h3>
     <a href="{{ route('koki.menu.index') }}" class="btn btn-outline-secondary btn-sm">&larr; Kembali</a>
 </div>
 
@@ -38,6 +38,17 @@
                 <label class="form-label">Harga (Rp)</label>
                 <input type="number" name="harga" class="form-control" value="{{ old('harga', $menu->harga) }}" min="0" required>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Stok Saat Ini (porsi)</label>
+                <input type="number" name="stok" class="form-control" value="{{ old('stok', $menu->stok) }}" min="0" required>
+                <div class="form-text">
+                    Status saat ini:
+                    <span class="badge {{ $menu->status_ketersediaan === 'Tersedia' ? 'bg-success' : 'bg-secondary' }}">
+                        {{ $menu->status_ketersediaan }}
+                    </span>
+                    — ubah angka stok untuk restock atau menandai habis.
+                </div>
+            </div>
             @if ($menu->foto_menu)
                 <div class="mb-3">
                     <label class="form-label d-block">Foto Saat Ini</label>
@@ -47,13 +58,6 @@
             <div class="mb-3">
                 <label class="form-label">Ganti Foto (opsional)</label>
                 <input type="file" name="foto_menu" class="form-control" accept="image/*">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Status Ketersediaan</label>
-                <select name="status_ketersediaan" class="form-select" required>
-                    <option value="Tersedia" {{ old('status_ketersediaan', $menu->status_ketersediaan) === 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                    <option value="Habis" {{ old('status_ketersediaan', $menu->status_ketersediaan) === 'Habis' ? 'selected' : '' }}>Habis</option>
-                </select>
             </div>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>

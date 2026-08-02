@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 // Implementasi Pro-2 (Pemesanan Menu): KK-05, KK-06, KK-07
+// + Fitur tambahan: validasi & pengurangan Stok per Porsi saat pesanan dibuat
 class PesananController extends Controller
 {
-    // Menampilkan meja yang sudah Terisi (siap dipesankan) dan daftar pesanan aktif
     public function index()
     {
         $mejaTerisi = Meja::where('status_meja', 'Terisi')->orderBy('nomor_meja')->get();
@@ -26,7 +26,7 @@ class PesananController extends Controller
         return view('pelayan.pesanan.index', compact('mejaTerisi', 'pesananAktif'));
     }
 
-    // Aliran 2.2: Sistem menampilkan menu yang berstatus Tersedia (baca D3)
+    // Aliran 2.2: Sistem menampilkan menu yang berstatus Tersedia beserta stoknya (baca D3)
     public function create(Meja $meja)
     {
         if ($meja->status_meja !== 'Terisi') {
@@ -35,14 +35,15 @@ class PesananController extends Controller
         }
 
         $menus = Menu::where('status_ketersediaan', 'Tersedia')
+            ->where('stok', '>', 0)
             ->orderBy('kategori')->orderBy('nama_menu')
             ->get();
 
         return view('pelayan.pesanan.create', compact('meja', 'menus'));
     }
 
-    // Aliran 2.1, 2.4, 2.5, 2.6: Pelayan input pesanan, sistem simpan ke D4 & D5,
-    // lalu kirim notifikasi ke Koki
+    // Aliran 2.1, 2.4, 2.5, 2.6: Pelayan input pesanan, sistem validasi stok mencukupi,
+    // simpan ke D4 & D5, kurangi stok menu, lalu kirim notifikasi ke Koki
     public function store(Request $request, Meja $meja)
     {
         $validated = $request->validate([
@@ -56,6 +57,15 @@ class PesananController extends Controller
             return back()->with('error', 'Pilih minimal 1 menu dengan jumlah porsi lebih dari 0.');
         }
 
+        // Validasi stok mencukupi untuk setiap item sebelum menyimpan apa pun
+        foreach ($items as $kodeMenu => $jumlahPorsi) {
+            $menu = Menu::findOrFail($kodeMenu);
+            if ($menu->stok < $jumlahPorsi) {
+                return back()->withInput()->with('error',
+                    "Stok {$menu->nama_menu} tidak mencukupi (tersisa {$menu->stok} porsi).");
+            }
+        }
+
         DB::transaction(function () use ($items, $meja) {
             $pesanan = Pesanan::create([
                 'nomor_meja' => $meja->nomor_meja,
@@ -66,18 +76,21 @@ class PesananController extends Controller
 
             foreach ($items as $kodeMenu => $jumlahPorsi) {
                 $menu = Menu::findOrFail($kodeMenu);
+
                 DetailPesanan::create([
                     'nomor_pesanan' => $pesanan->nomor_pesanan,
                     'kode_menu' => $menu->kode_menu,
                     'jumlah_porsi' => $jumlahPorsi,
                     'subtotal' => $menu->harga * $jumlahPorsi,
                 ]);
+
+                // Kurangi stok menu, otomatis sinkronkan status_ketersediaan
+                $menu->stok -= $jumlahPorsi;
+                $menu->sinkronStatusDariStok();
+                $menu->save();
             }
         });
 
-        // Aliran 2.6: notifikasi pesanan baru ke Koki akan muncul otomatis
-        // pada Modul Pemrosesan Pesanan Koki (dibangun Hari 4), karena Koki
-        // membaca D4 dengan status 'Diproses'.
         return redirect()->route('pelayan.pesanan.index')
             ->with('success', "Pesanan untuk Meja {$meja->nomor_meja} berhasil disimpan.");
     }

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Tambah Menu</h3>
+    <h3><i class="bi bi-journal-plus me-2"></i>Tambah Menu</h3>
     <a href="{{ route('koki.menu.index') }}" class="btn btn-outline-secondary btn-sm">&larr; Kembali</a>
 </div>
 
@@ -39,15 +39,13 @@
                 <input type="number" name="harga" class="form-control" value="{{ old('harga') }}" min="0" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">Foto Menu (opsional)</label>
-                <input type="file" name="foto_menu" class="form-control" accept="image/*">
+                <label class="form-label">Stok Awal (porsi)</label>
+                <input type="number" name="stok" class="form-control" value="{{ old('stok', 0) }}" min="0" required>
+                <div class="form-text">Status ketersediaan otomatis mengikuti nilai stok (stok 0 = Habis).</div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Status Ketersediaan</label>
-                <select name="status_ketersediaan" class="form-select" required>
-                    <option value="Tersedia" selected>Tersedia</option>
-                    <option value="Habis">Habis</option>
-                </select>
+                <label class="form-label">Foto Menu (opsional)</label>
+                <input type="file" name="foto_menu" class="form-control" accept="image/*">
             </div>
             <button type="submit" class="btn btn-primary">Simpan Menu</button>
         </form>

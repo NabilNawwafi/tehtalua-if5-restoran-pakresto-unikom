@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ---- Akun pegawai contoh (1 tiap role, sesuai KK-01) ----
         Pegawai::create([
             'nama_pegawai' => 'Ani (Pelayan)',
             'role' => 'Pelayan',
@@ -34,24 +33,25 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        // ---- Contoh meja (Dt-2) ----
-        foreach ([2, 2, 4, 4, 6, 8] as $i => $kapasitas) {
+        foreach ([2, 2, 4, 4, 6, 8] as $kapasitas) {
             Meja::create([
                 'kapasitas_meja' => $kapasitas,
                 'status_meja' => 'Tersedia',
             ]);
         }
 
-        // ---- Contoh menu (Dt-3) ----
+        // Menu contoh, sudah termasuk stok awal (fitur Manajemen Stok per Porsi)
         $menus = [
-            ['nama_menu' => 'Nasi Goreng Spesial', 'kategori' => 'Makanan', 'harga' => 25000],
-            ['nama_menu' => 'Ayam Bakar', 'kategori' => 'Makanan', 'harga' => 30000],
-            ['nama_menu' => 'Mie Goreng', 'kategori' => 'Makanan', 'harga' => 22000],
-            ['nama_menu' => 'Es Teh Manis', 'kategori' => 'Minuman', 'harga' => 8000],
-            ['nama_menu' => 'Jus Alpukat', 'kategori' => 'Minuman', 'harga' => 15000],
+            ['nama_menu' => 'Nasi Goreng Spesial', 'kategori' => 'Makanan', 'harga' => 25000, 'stok' => 20],
+            ['nama_menu' => 'Ayam Bakar', 'kategori' => 'Makanan', 'harga' => 30000, 'stok' => 15],
+            ['nama_menu' => 'Mie Goreng', 'kategori' => 'Makanan', 'harga' => 22000, 'stok' => 20],
+            ['nama_menu' => 'Es Teh Manis', 'kategori' => 'Minuman', 'harga' => 8000, 'stok' => 50],
+            ['nama_menu' => 'Jus Alpukat', 'kategori' => 'Minuman', 'harga' => 15000, 'stok' => 10],
         ];
         foreach ($menus as $m) {
-            Menu::create($m + ['status_ketersediaan' => 'Tersedia']);
+            $menu = new Menu($m);
+            $menu->sinkronStatusDariStok();
+            $menu->save();
         }
     }
 }
