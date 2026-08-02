@@ -75,6 +75,50 @@
         .card-title i {
             color: var(--brand-color);
         }
+        .welcome-banner {
+            background: linear-gradient(120deg, var(--brand-color) 0%, var(--brand-color-dark) 100%);
+            color: #fff;
+            border-radius: 14px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-banner .banner-icon {
+            font-size: 4rem;
+            opacity: 0.25;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            height: 100%;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .stat-label {
+            font-size: 0.78rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
