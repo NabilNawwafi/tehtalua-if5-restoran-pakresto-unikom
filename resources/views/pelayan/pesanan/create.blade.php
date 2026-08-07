@@ -28,52 +28,94 @@
         @csrf
 
         @foreach ($menus->groupBy('kategori') as $kategori => $items)
-            <h5 class="mt-4">{{ $kategori }}</h5>
-            <table class="table table-bordered bg-white align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Nama Menu</th>
-                        <th style="width:150px">Harga</th>
-                        <th style="width:100px">Sisa Stok</th>
-                        <th style="width:130px">Jumlah Porsi</th>
-                        <th style="width:150px" class="text-end">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="kategori-section mb-4">
+                <h5 class="kategori-title">
+                    <i class="bi {{ $kategori === 'Makanan' ? 'bi-egg-fried' : 'bi-cup-straw' }} me-2"></i>{{ $kategori }}
+                </h5>
+                <div class="row g-3">
                     @foreach ($items as $menu)
-                        <tr>
-                            <td>{{ $menu->nama_menu }}</td>
-                            <td>Rp {{ number_format($menu->harga, 0, ',', '.') }}</td>
-                            <td><span class="badge bg-light text-dark border">{{ $menu->stok }} porsi</span></td>
-                            <td>
-                                <input type="number" name="items[{{ $menu->kode_menu }}]"
-                                       class="form-control form-control-sm input-qty"
-                                       data-harga="{{ $menu->harga }}"
-                                       min="0" max="{{ $menu->stok }}" value="0">
-                            </td>
-                            <td class="text-end subtotal-cell">Rp 0</td>
-                        </tr>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card h-100 kartu-menu">
+                                <div class="kartu-menu-foto">
+                                    @if ($menu->foto_menu)
+                                        <img src="{{ asset('storage/'.$menu->foto_menu) }}" alt="{{ $menu->nama_menu }}">
+                                    @else
+                                        <div class="kartu-menu-foto-kosong"><i class="bi bi-image"></i></div>
+                                    @endif
+                                    <span class="badge kartu-menu-stok">{{ $menu->stok }} porsi</span>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title mb-1">{{ $menu->nama_menu }}</h6>
+                                    <p class="text-primary fw-bold mb-2">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+
+                                    <div class="mt-auto">
+                                        <label class="form-label small text-muted mb-1">Jumlah Porsi</label>
+                                        <input type="number" name="items[{{ $menu->kode_menu }}]"
+                                               class="form-control form-control-sm input-qty mb-2"
+                                               data-harga="{{ $menu->harga }}"
+                                               min="0" max="{{ $menu->stok }}" value="0">
+                                        <div class="text-end small text-muted">
+                                            Subtotal: <span class="subtotal-cell fw-semibold text-dark">Rp 0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
+            </div>
         @endforeach
 
-        <div class="card mt-3">
+        <div class="card mt-2 mb-3 border-primary">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Total Pesanan</h5>
                 <h4 class="mb-0 text-primary" id="totalPesanan">Rp 0</h4>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Simpan Pesanan</button>
+        <button type="submit" class="btn btn-primary">Simpan Pesanan</button>
     </form>
 @endif
+
+<style>
+    .kategori-title {
+        border-bottom: 2px solid var(--brand-accent);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+    }
+    .kartu-menu-foto {
+        position: relative;
+        height: 130px;
+        overflow: hidden;
+        border-radius: 0.375rem 0.375rem 0 0;
+        background: #f0ebe4;
+    }
+    .kartu-menu-foto img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .kartu-menu-foto-kosong {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #c9bdae;
+    }
+    .kartu-menu-stok {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0,0,0,0.55);
+    }
+</style>
 
 <script>
 function formatRupiah(angka) {
     return 'Rp ' + angka.toLocaleString('id-ID');
 }
-
 function hitungUlangTotal() {
     let total = 0;
     document.querySelectorAll('.input-qty').forEach(function (input) {
@@ -81,13 +123,10 @@ function hitungUlangTotal() {
         const jumlah = parseInt(input.value, 10) || 0;
         const subtotal = harga * jumlah;
         total += subtotal;
-
-        const cellSubtotal = input.closest('tr').querySelector('.subtotal-cell');
-        cellSubtotal.textContent = formatRupiah(subtotal);
+        input.closest('.card-body').querySelector('.subtotal-cell').textContent = formatRupiah(subtotal);
     });
     document.getElementById('totalPesanan').textContent = formatRupiah(total);
 }
-
 document.querySelectorAll('.input-qty').forEach(function (input) {
     input.addEventListener('input', hitungUlangTotal);
 });
